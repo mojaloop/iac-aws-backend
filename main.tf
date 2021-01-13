@@ -1,6 +1,6 @@
 locals {
   prevent_unencrypted_uploads = var.prevent_unencrypted_uploads && var.enable_server_side_encryption ? true : false
-  backend_name = "${var.client}-mojaloop"
+  backend_name                = "${var.tenant}-mojaloop"
   terraform_backend_config_file = format(
     "%s/%s",
     var.terraform_backend_config_file_path,
@@ -13,10 +13,10 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket_policy" "ensure_AES256" {
-  count = local.prevent_unencrypted_uploads ? 1 : 0
+  count      = local.prevent_unencrypted_uploads ? 1 : 0
   depends_on = [aws_s3_bucket_public_access_block.default]
-  bucket = aws_s3_bucket.default.id
-  policy = <<POLICY
+  bucket     = aws_s3_bucket.default.id
+  policy     = <<POLICY
 {
     "Version": "2012-10-17",
     "Id": "TerraformStateBucketPolicyUploads",
@@ -39,8 +39,8 @@ resource "aws_s3_bucket_policy" "ensure_AES256" {
 }
 
 resource "aws_s3_bucket_policy" "prevent_unencrypted_uploads" {
-  count = local.prevent_unencrypted_uploads ? 1 : 0
-  depends_on = [aws_s3_bucket_public_access_block.default,aws_s3_bucket_policy.ensure_AES256]
+  count      = local.prevent_unencrypted_uploads ? 1 : 0
+  depends_on = [aws_s3_bucket_public_access_block.default, aws_s3_bucket_policy.ensure_AES256]
 
   bucket = aws_s3_bucket.default.id
   policy = <<POLICY
@@ -66,7 +66,7 @@ resource "aws_s3_bucket_policy" "prevent_unencrypted_uploads" {
 }
 
 resource "aws_s3_bucket" "default" {
-  bucket        = "${local.backend_name}-state"
+  bucket = "${local.backend_name}-state"
   //acl           = var.acl
   //region        = var.region
   force_destroy = true
@@ -86,7 +86,7 @@ resource "aws_s3_bucket" "default" {
   }
 
   tags = {
-    Name = var.client
+    Tenant = var.tenant
   }
 }
 
@@ -124,7 +124,8 @@ resource "aws_dynamodb_table" "with_server_side_encryption" {
   }
 
   tags = {
-    Name = "${var.client}-encrypted"
+    Tenant = var.tenant
+    Name   = "${var.tenant}-encrypted"
   }
 }
 
@@ -150,7 +151,8 @@ resource "aws_dynamodb_table" "without_server_side_encryption" {
   }
 
   tags = {
-    Name = "${var.client}-unencrypted"
+    Tenant = var.tenant
+    Name   = "${var.tenant}-unencrypted"
   }
 }
 
@@ -169,9 +171,9 @@ data "template_file" "terraform_backend_config" {
       0
     )
 
-    encrypt              = var.enable_server_side_encryption ? "true" : "false"
-    role_arn             = var.role_arn
-    profile              = var.profile
+    encrypt  = var.enable_server_side_encryption ? "true" : "false"
+    role_arn = var.role_arn
+    profile  = var.profile
   }
 }
 

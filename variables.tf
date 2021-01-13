@@ -3,8 +3,8 @@ variable "region" {
   type        = string
 }
 
-variable "client" {
-  description = "Name of client. Must not contain spaces"
+variable "tenant" {
+  description = "Name of tenant. Must not contain spaces"
   type        = string
 }
 

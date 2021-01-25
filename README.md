@@ -33,7 +33,7 @@ Initializing provider plugins...
 ...
 
 $ terraform apply
-var.client
+var.tenant
   Name of client. Must not contain spaces
 
   Enter a value: acme

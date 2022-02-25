@@ -1,3 +1,9 @@
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = "~> 3.74"
+  }
+}
 locals {
   prevent_unencrypted_uploads = var.prevent_unencrypted_uploads && var.enable_server_side_encryption ? true : false
   backend_name                = "${var.tenant}-mojaloop"

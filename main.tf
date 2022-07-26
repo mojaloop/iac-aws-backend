@@ -6,7 +6,7 @@ terraform {
 }
 locals {
   prevent_unencrypted_uploads = var.prevent_unencrypted_uploads && var.enable_server_side_encryption ? true : false
-  backend_name                = "${var.tenant}-mojaloop"
+  backend_name                = "${var.tenant}-${var.bucket_suffix}"
   terraform_backend_config_file = format(
     "%s/%s",
     var.terraform_backend_config_file_path,

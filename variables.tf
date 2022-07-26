@@ -109,3 +109,9 @@ variable "terraform_state_file" {
   type        = string
   default     = "terraform.tfstate"
 }
+
+variable "bucket_suffix" {
+  description = "suffix to identify bucket/dynamo db"
+  type        = string
+  default     = "mojaloop"
+}
